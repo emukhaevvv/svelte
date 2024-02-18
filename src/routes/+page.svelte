@@ -1,2 +1,26 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script lang="ts">
+    let isLogIn = false;
+
+    const changeLogIn = () => {
+        isLogIn = !isLogIn;
+    }
+
+    const fetchPokemon = async () => {
+        const data = await fetch("https://pokeapi.co/api/v2/pokemon/ditto");
+        const response = await data.json();
+        return response;
+    }
+</script>
+
+{#if !isLogIn}
+    <button on:click={changeLogIn}>Login</button>
+{:else}
+    {#await fetchPokemon()}
+        <div></div>
+    {:then response} 
+        <div>{response.name}</div>
+        {#each response.stats as {base_stat}, i (i)}
+            <div>{base_stat}</div>
+        {/each}
+    {/await}
+{/if}
